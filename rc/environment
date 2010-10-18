@@ -20,7 +20,7 @@ LS_OPTIONS=( -F -b -T )
 PAGER=less
 LESSOPEN=''
 
-for ( p in ( /opt/local /usr/local $HOME/bin )) {
+for ( p in ( /opt/local /usr/local $HOME )) {
     PATH=$PATH:$p/bin:$p/sbin
     MANPATH=$MANPATH:$p/man:$p/share/man
 }
