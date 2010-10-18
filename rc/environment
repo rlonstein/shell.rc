@@ -2,6 +2,9 @@
 # Set up basic environment for rc/es
 #
 
+SHELL_ROOT=$HOME/shells/rc
+SHELL_LIB=$SHELL_ROOT/rclib
+
 umask 022
 
 # force language and encoding to something (hopefully) sane
