@@ -1,0 +1,30 @@
+#
+# Set up basic environment for rc/es
+#
+
+umask 022
+
+# force language and encoding to something (hopefully) sane
+LC_ALL=C
+LANG=C
+
+h=$HOME
+HOSTNAME=`{/bin/hostname}
+
+LS_OPTIONS=( -F -b -T )
+
+# less, don't auto anything for me...
+PAGER=less
+LESSOPEN=''
+
+for ( p in ( /opt/local /usr/local $HOME/bin )) {
+    PATH=$PATH:$p/bin:$p/sbin
+    MANPATH=$MANPATH:$p/man:$p/share/man
+}
+
+EDITOR=emacsclient
+
+#http_proxy=http://webproxy.example.com:8080/
+#https_proxy=$http_proxy
+#ftp_proxy=$http_proxy
+#no_proxy=example.com

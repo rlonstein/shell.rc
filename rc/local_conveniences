@@ -1,0 +1,66 @@
+#
+# rc/es functions in lieu of aliases
+# used for my convenience
+#
+
+fn yash { ssh foomatic.example.com -p 2222 }
+fn ohno { ssh ohno.example.com }
+fn go2ms { ssh -t -X -c bastion.example.com }
+
+if ( SunOS ) {
+  LS_OPTIONS=( -b -F )
+} else {
+  LS_OPTIONS=( -b -F -T0 )
+}
+
+fn ls { builtin ls $LS_OPTIONS $* }
+fn l { ls -FC $* }
+fn la { ls -FCba $* }
+fn ll { ls -FCbl $* }
+fn lla { ll -a $* }
+
+fn reperl {
+   perl -d -e 0
+}
+
+fn ff {
+   if ( ~ $#* 0 ) {
+       find . -type f
+   } else {
+       find . -type f $1
+   }
+}
+
+fn fd {
+   if ( ~ $#* 0 ) {
+       find . -type d
+   } else {
+       find . -type d $1
+   }
+}
+
+fn module { eval `{modulecmd sh $*} }
+
+#
+# sed one-liners as functions
+#
+fn dos2unix { sed 's/$//' }
+fn unix2dos { sed 's/$/\r/' }
+fn stripws  { sed 's/^[ \t]*//; s/[ \t]*$//' }
+fn catn     { sed '/./=' | sed '/./N; s/\n/ /' }
+
+
+#
+# Needed something like tilde homedir expansion
+# and we have NIS so introducing "cd~"  
+#
+fn yp_passwd {  f=``(:) {ypmatch $1 passwd}; echo $f(6) }
+fn path_atoms { echo ``(/){echo $1} }
+fn cd~ { 
+   atoms=`{path_atoms $1};
+   user=$atoms(1);
+   lshift atoms 1;
+   userdir=`{ yp_passwd $user}; 
+   tpath=`{echo $userdir $atoms | sed -e's/ /\//g'};
+   cd $tpath
+}

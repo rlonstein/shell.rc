@@ -1,0 +1,191 @@
+#
+# generic functions for both ES and RC
+#
+# little original here, some from long forgotten newgroups
+#
+
+fn true  { return 0 }
+fn false { return 1 }
+fn : { return 0 }
+
+fn SunOS {
+  if ( `{uname -s} = 'SunOS' ) {
+    return 0
+  } else {
+    return 1
+  }
+}
+
+#
+# smarter load
+#
+fn load { ~ $#* 1 && builtin . $SHELL_LIB/$1 }
+
+
+fn index {
+   switch ( $#* ) {
+     case 0 1
+       echo >[1=2] 'usage: index pattern list ...'
+       return 1
+     case *
+       elem = $1; prefix = () {
+         shift
+         if ( ! ~ $elem $* ) {
+           echo 0
+	   return 1
+         }
+         while ( prefix = ( $prefix $1 ) && ! ~ $elem $1 ) {
+           shift
+         }
+         echo $#prefix
+         return 0
+     }
+   }
+}
+
+fn seq {
+  switch ( $#* ) {
+  case 1
+    * = ( 1 $1 )
+  case 2
+  case *
+    echo >[1=2] usage: seq [start] stop
+    return 1
+  }
+  echo $1 $2 | awk '{
+    if ( $1 <= $2 )
+      for ( i = $1; i <= $2; i++ ) print i;
+    else
+      for ( i = $1; i >= $2; i-- ) print i;
+  }'
+}
+
+
+#
+# sh/ksh like read
+#
+fn read {
+  if ( ! ~ $#* 1 ) {
+    echo >[1=2] 'usage: read variable'
+    return 1
+  }
+  if ( ~ $1 '*' () *'='* ) {
+    echo >[1=2] 'read: bad variable name'
+    return 1
+  }
+  lines = () nl = () {
+    ifs = () { nl = `{ echo } }
+    ifs = $nl { lines = `{ line ; echo $status } }
+    if ( ~ $#lines 2 ) {
+      $1 = $lines(1)
+      return 0
+    } else {
+       $1 = ''
+       return $lines(1)
+    }
+  }
+}
+
+
+fn export {}
+
+#
+# somewhat smarter zless than typical /usr/bin/zless
+#
+fn zless {
+  for (fn in $*) {
+    type = `{ file -b -L $fn }
+    if ( $type = 'data' ) {
+      switch ( `{echo $fn | sed -e 's/^.*\(..\)$/\1/'} ) {
+      # unknown, take a guess based on last two chars
+        case xz;    xz -dc $fn   | less
+        case 7z;    7zip -dc $fn | less
+      }
+    } else {
+      switch ( $type ) {
+        case bzip2;     bzip2 -dc $fn     | less
+        case gzip;      gzip -dc $fn      | less
+        case compress;  uncompress -c $fn | less
+      }
+    }
+  }
+}
+
+
+fn lshift { lshift=$*; *=$$1; shift $lshift(2); $lshift(1)=$* }
+
+fn chop {
+  ~ $#* 0 1 && return 0
+  ans = '' {      # local variable
+    ans = ()
+    while(! ~ $#* 1) {
+      ans = ($ans $1)
+      shift
+    }
+    echo $ans
+  }
+}
+
+fn s {
+  echo $status
+}
+
+
+# directory functions ###################################################
+fn pwd { echo $PWD; }
+
+fn pushd {
+  dirs = ($PWD $dirs);          
+  builtin cd $*;
+  PWD = `{builtin pwd};
+}
+
+fn popd {
+  switch ($#*)
+    {
+    case 0
+      ;
+    case 1
+      echo 'popd: argument '^$1^' ignored.' >[1=2];
+    case *
+      echo 'popd: usage: popd [n].';
+    }
+
+  if (! ~ $dirs ()) 
+    {
+      builtin cd $dirs(1);
+      PWD = $dirs(1);
+      echo $PWD;
+      * = $dirs;
+      shift
+      dirs = $*;
+    }
+}
+
+fn cd {
+  ~ $* () && * = $home;
+  !~ $#* 1 && echo 'cd: too many arguments' >[1=2] && return 1;
+
+  if (test -r $* ) {
+    pushd $*;
+  } else {
+    echo cd: $* does not exist. >[1=2]
+    return 1;
+  } 
+}
+
+fn back { popd $*; }
+
+fn Back { 
+  cd $home;
+  PWD = $home;
+  dirs = ();
+}
+
+fn dirs {
+  echo $dirs;
+}
+
+PWD = `{builtin pwd} ; dirs = $PWD              # kickstart
+
+

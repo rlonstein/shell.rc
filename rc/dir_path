@@ -1,0 +1,59 @@
+#
+# manipulations of paths
+#
+
+DEFAULT_PATH = ( /bin /usr/bin /usr/local/bin )
+
+#
+# Strip duplicates from a colon-separated path
+#
+fn uniq_path {
+    if ( ! ~ $#* 1) {
+        echo >[1=2] 'usage: uniq_path <path>'
+    }
+    atoms = ``(:){echo $1}
+    unique = ()
+
+    for (a in $atoms) {
+        if ( ! ~ $unique $a ) { 
+            unique = ($unique $a);
+        }
+    }
+    echo $unique | sed -e 's/ /:/g';
+}
+
+
+
+#
+# prepend a path, uniqifying the result
+#
+fn prepend_path {
+    r = `{ chop $* }
+    for ( p in $* ) {
+        r = `{ uniq_path $r:$p }
+    }
+    echo $r
+}
+
+
+
+#
+# append a path, uniqifying the result
+#
+fn append_path {
+   r = $*($#*)
+   for  ( p in $* ) {
+       echo "root [$r], p [$p]"
+       r = `{ uniq_path $p:$r }
+   }
+   echo $r
+}
+
+
+
+#
+# remove all instances of a path
+#
+fn delete_path {
+
+}
