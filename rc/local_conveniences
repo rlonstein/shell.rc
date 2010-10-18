@@ -3,9 +3,11 @@
 # used for my convenience
 #
 
-fn yash { ssh foomatic.example.com -p 2222 }
-fn ohno { ssh ohno.example.com }
-fn go2ms { ssh -t -X -c bastion.example.com }
+#fn yash { ssh foomatic.example.com -p 2222 }
+#fn ohno { ssh ohno.example.com }
+#fn go2ms { ssh -t -X -c bastion.example.com }
+
+load $SHELL_HOME/private
 
 if ( SunOS ) {
   LS_OPTIONS=( -b -F )
