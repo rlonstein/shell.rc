@@ -41,6 +41,13 @@ fn fd {
    }
 }
 
+fn go {
+  for(h in $*){
+    cmd="''ssh -q $h''";
+    tmux neww -n $h $cmd
+  }
+}
+
 fn module { eval `{modulecmd sh $*} }
 
 #
