@@ -2,9 +2,10 @@
 # RC, unix port of Plan9 shell, config
 #
 
-SHELL_ROOT=$HOME/shells/rc
-SHELL_LIBS=$SHELL_ROOT/rc/lib
+SHELL_ROOT=$HOME/shell.rc/rc
 
 . $SHELL_ROOT/environment
 . $SHELL_ROOT/generic_functions
 . $SHELL_ROOT/local_conveniences
+. $SHELL_ROOT/private
+

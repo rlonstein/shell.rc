@@ -7,8 +7,6 @@
 #fn ohno { ssh ohno.example.com }
 #fn go2ms { ssh -t -X -c bastion.example.com }
 
-load $SHELL_HOME/private
-
 if ( SunOS ) {
   LS_OPTIONS=( -b -F )
 } else {

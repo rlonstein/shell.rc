@@ -2,10 +2,11 @@
 # Set up basic environment for rc/es
 #
 
-SHELL_ROOT=$HOME/shells/rc
-SHELL_LIB=$SHELL_ROOT/rclib
+SHELL_ROOT=$HOME/shell.rc/rc
 
 umask 022
+
+history=$HOME/.rc_history
 
 # force language and encoding to something (hopefully) sane
 LC_ALL=C
